@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import AndroidToast 1.0
 
 Window {
     width: 640
@@ -15,7 +16,9 @@ Window {
         Button {
             anchors.centerIn: parent
             text: "Exit"
-            onClicked: Qt.quit()
+            onClicked: {
+                AndroidToast.showToast("Это сообщение Toast через JNI!")
+            }
         }
     }
 
