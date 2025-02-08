@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.16)
 
 project(test_android_qt_app VERSION 0.1 LANGUAGES CXX)
 
+message(STATUS "CMAKE_COMMAND: ${CMAKE_COMMAND}")
+message(STATUS "CMAKE_ROOT: ${CMAKE_ROOT}")
+message(STATUS "CMAKE_PROJECT_NAME: ${CMAKE_PROJECT_NAME}")
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 REQUIRED COMPONENTS
@@ -9,9 +13,18 @@ find_package(Qt6 REQUIRED COMPONENTS
 
 qt_standard_project_setup(REQUIRES 6.8)
 
+set(SOURCES
+    src/androidtoast.cpp
+    src/androidbannerad.cpp
+)
+
+set(HEADERS
+    include/androidtoast.h
+    include/androidbannerad.h
+)
+
 qt_add_executable(apptest_android_qt_app
-    main.cpp
-    androidtoast.h androidtoast.cpp
+    src/main.cpp
 )
 
 qt_add_qml_module(apptest_android_qt_app
@@ -19,6 +32,13 @@ qt_add_qml_module(apptest_android_qt_app
     VERSION 1.0
     QML_FILES
         Main.qml
+    SOURCES
+        ${SOURCES}
+        ${HEADERS}
+)
+
+target_include_directories(apptest_android_qt_app
+    PRIVATE include
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

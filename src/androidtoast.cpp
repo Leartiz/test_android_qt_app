@@ -26,7 +26,7 @@ namespace lez
     QNativeInterface::QAndroidApplication::runOnAndroidMainThread([javaMessage]() {
        QJniObject activity = QNativeInterface::QAndroidApplication::context();
        activity.callStaticMethod<void>(
-            "ru/leartiz/StickyBannerAdActivity",
+            "ru/leartiz/BannerAdActivity",
             "showToast",
             "(Landroid/content/Context;Ljava/lang/String;)V",
             activity.object<jobject>(),
