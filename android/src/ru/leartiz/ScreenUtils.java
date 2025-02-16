@@ -6,24 +6,26 @@ import android.content.Context;
 import android.graphics.Point;
 import android.os.Build;
 
-import android.view.WindowManager;
+import android.util.Log;
+
 import android.view.Display;
+import android.view.WindowManager;
+import android.view.WindowMetrics;
 
 public class ScreenUtils {
+
+    static private final String TAG =
+        ScreenUtils.class.getSimpleName();
+
+    // -------------------------------------------------------------------
+
     public static Point getScreenSizeInPixels(Context context) {
         WindowManager windowManager = (WindowManager)context.getSystemService(
             Context.WINDOW_SERVICE);
 
         Display display = windowManager.getDefaultDisplay();
         Point screenSize = new Point();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            display.getSize(screenSize);
-        }
-        else {
-            screenSize.y = display.getHeight();
-            screenSize.x = display.getWidth();
-        }
+        display.getSize(screenSize);
 
         return screenSize;
     }
@@ -33,6 +35,34 @@ public class ScreenUtils {
         return pixels / density;
     }
 
+    // in pixels
+    // -------------------------------------------------------------------
+
+    public static int getWidthInPixels(Context context) {
+        Point screenSize = getScreenSizeInPixels(context);
+        return screenSize.x;
+    }
+
+    public static int getHeightInPixels(Context context) {
+        Point screenSize = getScreenSizeInPixels(context);
+        return screenSize.y;
+    }
+
+    // in pixels
+    // -------------------------------------------------------------------
+
+    public static float getWidthInDp(Context context) {
+        Point screenSize = getScreenSizeInPixels(context);
+        return convertPixelsToDp(context, screenSize.x);
+    }
+
+    public static float getHeightInDp(Context context) {
+        Point screenSize = getScreenSizeInPixels(context);
+        return convertPixelsToDp(context, screenSize.y);
+    }
+
+    // -------------------------------------------------------------------
+
     public static void logScreenSize(Context context) {
         Point screenSize = getScreenSizeInPixels(context);
         int widthInPixels = screenSize.x;
@@ -41,7 +71,23 @@ public class ScreenUtils {
         float widthInDp = convertPixelsToDp(context, widthInPixels);
         float heightInDp = convertPixelsToDp(context, heightInPixels);
 
-        Log.d("Screen Size", "Width: " + widthInPixels + "px, Height: " + heightInPixels + "px");
-        Log.d("Screen Size", "Width: " + widthInDp + "dp, Height: " + heightInDp + "dp");
+        // ***
+
+        Log.d(TAG, "Width: " + widthInPixels +   "px, " +
+                   "Height: " + heightInPixels + "px");
+
+        Log.d(TAG, "Width: " + widthInDp +   "dp, " +
+                   "Height: " + heightInDp + "dp");
+    }
+
+    public static void logVersionCodes() {
+        Log.d(TAG, "VERSION_CODES.P: " + Build.VERSION_CODES.P);
+        Log.d(TAG, "VERSION_CODES.Q: " + Build.VERSION_CODES.Q);
+        Log.d(TAG, "VERSION_CODES.R: " + Build.VERSION_CODES.R);
+        Log.d(TAG, "VERSION_CODES.S: " + Build.VERSION_CODES.S);
+        Log.d(TAG, "VERSION_CODES.S_V2: " + Build.VERSION_CODES.S_V2);
+        Log.d(TAG, "VERSION_CODES.TIRAMISU: " + Build.VERSION_CODES.TIRAMISU);
+        Log.d(TAG, "VERSION_CODES.UPSIDE_DOWN_CAKE: " + Build.VERSION_CODES.UPSIDE_DOWN_CAKE);
+        //...
     }
 }

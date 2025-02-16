@@ -45,7 +45,12 @@ public class BannerAdActivity extends QtActivity {
         mainInstance = this;
         Log.d(TAG, "created");
 
+        // ***
+
         ScreenUtils.logScreenSize(this);
+        ScreenUtils.logVersionCodes();
+
+        // ***
 
         // test demo:
         {
@@ -175,6 +180,20 @@ public class BannerAdActivity extends QtActivity {
         });
     }
 
+    public void setBannerAdPosition(float x, float y) {
+        if (m_bannerAdView == null) {
+            Log.w(TAG, "BannerAdView is not created. Cannot set AdSize.");
+            return;
+        }
+
+        runOnUiThread(new Runnable() {
+            public void run() {
+                m_bannerAdView.setX(x);
+                m_bannerAdView.setY(y);
+            }
+        });
+    }
+
     // -------------------------------------------------------------------
 
     public void initializeBannerAdView() {
@@ -217,7 +236,7 @@ public class BannerAdActivity extends QtActivity {
 
         m_bannerAdView.setLayoutParams(params);
         m_bannerAdView.setX(0);
-        m_bannerAdView.setY(0);
+        m_bannerAdView.setY(1000);
 
         // ***
 
