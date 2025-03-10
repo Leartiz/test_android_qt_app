@@ -14,5 +14,4 @@ namespace lez
     };
 }
 
-
 #endif // ANDROIDTOAST_H

@@ -1,8 +1,11 @@
 #include "androidbannerad.h"
 
-
-AndroidBannerAd::AndroidBannerAd(QObject *parent)
-    : QObject{parent}
+namespace lez
 {
+    AndroidBannerAd::AndroidBannerAd(QObject *parent)
+        : QObject{parent}
+    {
 
+    }
 }
+

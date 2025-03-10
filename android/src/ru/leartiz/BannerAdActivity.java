@@ -33,8 +33,13 @@ public class BannerAdActivity extends QtActivity {
     static private final String DEMO_AD_UNIT_ID = "demo-banner-yandex";
     static private String AD_UNIT_ID = "";
 
+    // ***
+
+    private ViewGroup m_rootViewGroup = null;
     private BannerAdView m_bannerAdView = null;
+
     private boolean m_isAdBannerShowed = false;
+    private boolean m_isAdBannerLoaded = false;
     private boolean m_isAdSizeConfigured = false;
     private boolean m_isAdUnitIdConfigured = false;
 
@@ -42,8 +47,10 @@ public class BannerAdActivity extends QtActivity {
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        mainInstance = this;
         Log.d(TAG, "created");
+
+        mainInstance = this;
+        m_rootViewGroup = findViewById(android.R.id.content);
 
         // ***
 
@@ -57,8 +64,19 @@ public class BannerAdActivity extends QtActivity {
             initializeBannerAdView();
             setBannerAdUnitId(DEMO_AD_UNIT_ID);
             setBannerAdSize(320, 50);
+            //showBannerAd();
             //...
         }
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        if (m_bannerAdView != null) {
+            m_bannerAdView.destroy();
+        }
+
+        super.onDestroy();
     }
 
     // public
@@ -124,7 +142,7 @@ public class BannerAdActivity extends QtActivity {
 
     public void setBannerAdUnitId(final String adUnitId) {
         if (m_bannerAdView == null) {
-            Log.w(TAG, "BannerAdView is not created. Cannot set AdUnitId.");
+            Log.w(TAG, "BannerAdView is not created. Cannot set AdUnitId");
             return;
         }
 
@@ -151,7 +169,7 @@ public class BannerAdActivity extends QtActivity {
 
     public void setBannerAdSize(Integer width, Integer maxHeight) {
         if (m_bannerAdView == null) {
-            Log.w(TAG, "BannerAdView is not created. Cannot set AdSize.");
+            Log.w(TAG, "BannerAdView is not created. Cannot set AdSize");
             return;
         }
 
@@ -182,7 +200,7 @@ public class BannerAdActivity extends QtActivity {
 
     public void setBannerAdPosition(float x, float y) {
         if (m_bannerAdView == null) {
-            Log.w(TAG, "BannerAdView is not created. Cannot set AdSize.");
+            Log.w(TAG, "BannerAdView is not created. Cannot set AdPosition");
             return;
         }
 
@@ -196,6 +214,32 @@ public class BannerAdActivity extends QtActivity {
 
     // -------------------------------------------------------------------
 
+    //
+    // it is not yet known how to use!
+    //
+    public void shutdownBannerAdView() {
+        if (m_bannerAdView == null) {
+            Log.w(TAG, "BannerAdView is not created. Cannot shutdown");
+            return;
+        }
+
+        runOnUiThread(new Runnable() {
+            public void run() {
+                m_isAdBannerShowed = false;
+                m_isAdBannerLoaded = false;
+
+                m_isAdSizeConfigured = false;
+                m_isAdUnitIdConfigured = false;
+
+                // ***
+
+                m_rootViewGroup.removeView(m_bannerAdView);
+                m_bannerAdView.destroy();
+                m_bannerAdView = null;
+            }
+        });
+    }
+
     public void initializeBannerAdView() {
         if (m_bannerAdView != null) {
             Log.w(TAG, "BannerAdView has already been initialized");
@@ -205,7 +249,10 @@ public class BannerAdActivity extends QtActivity {
         // ***
 
         m_bannerAdView = new BannerAdView(this);
+        m_bannerAdView.setVisibility(View.GONE);
+        // then the state changes...
         {
+            Log.d(TAG, "m_bannerAdView.visibility: " + m_bannerAdView.getVisibility());
             Log.d(TAG, "m_bannerAdView.info: " + m_bannerAdView.getInfo());
             Log.d(TAG, "m_bannerAdView.adSize: " + m_bannerAdView.getAdSize());
             //...
@@ -213,6 +260,7 @@ public class BannerAdActivity extends QtActivity {
 
         // ***
 
+        // use x and y!
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.WRAP_CONTENT,
             FrameLayout.LayoutParams.WRAP_CONTENT
@@ -236,12 +284,11 @@ public class BannerAdActivity extends QtActivity {
 
         m_bannerAdView.setLayoutParams(params);
         m_bannerAdView.setX(0);
-        m_bannerAdView.setY(1000);
+        m_bannerAdView.setY(0);
 
         // ***
 
-        FrameLayout rootLayout = findViewById(android.R.id.content);
-        rootLayout.addView(m_bannerAdView);
+        m_rootViewGroup.addView(m_bannerAdView); // !
 
         // ***
 
@@ -251,11 +298,18 @@ public class BannerAdActivity extends QtActivity {
                 public void onAdLoaded() {
                     Log.d(TAG, "Ad loaded.");
                     logAboutBannerAdView();
+
+                    // ***
+
+                    m_isAdBannerLoaded = true;
                 }
 
                 @Override
                 public void onAdFailedToLoad(AdRequestError error) {
                     Log.e(TAG, "Ad failed to load: " + error);
+                    Log.e(TAG, "Description: " + error.getDescription());
+                    Log.e(TAG, "Code: " + error.getCode());
+                    m_isAdBannerLoaded = false;
                 }
 
                 @Override
@@ -275,7 +329,8 @@ public class BannerAdActivity extends QtActivity {
 
                 @Override
                 public void onImpression(ImpressionData impressionData) {
-                    Log.d(TAG, "Impression.");
+                    Log.d(TAG, "Impression: " +
+                        impressionData.getRawData());
                 }
             }
         );
@@ -287,6 +342,7 @@ public class BannerAdActivity extends QtActivity {
         runOnUiThread(() -> {
             if (m_bannerAdView != null) {
                 m_bannerAdView.setVisibility(View.VISIBLE);
+                m_isAdBannerShowed = true;
             }
         });
     }
@@ -295,6 +351,7 @@ public class BannerAdActivity extends QtActivity {
         runOnUiThread(() -> {
             if (m_bannerAdView != null) {
                 m_bannerAdView.setVisibility(View.GONE);
+                m_isAdBannerShowed = false;
             }
         });
     }

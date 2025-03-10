@@ -20,13 +20,11 @@ public class ScreenUtils {
     // -------------------------------------------------------------------
 
     public static Point getScreenSizeInPixels(Context context) {
-        WindowManager windowManager = (WindowManager)context.getSystemService(
-            Context.WINDOW_SERVICE);
-
-        Display display = windowManager.getDefaultDisplay();
+        Display display = context.getDisplay();
         Point screenSize = new Point();
-        display.getSize(screenSize);
 
+        // This method was deprecated in API level 30
+        display.getSize(screenSize);
         return screenSize;
     }
 

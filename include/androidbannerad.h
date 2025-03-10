@@ -3,14 +3,18 @@
 
 #include <QObject>
 
-class AndroidBannerAd : public QObject
+namespace lez
 {
-    Q_OBJECT
-public:
-    explicit AndroidBannerAd(QObject *parent = nullptr);
+    class AndroidBannerAd : public QObject
+    {
+        Q_OBJECT
+    public:
+        explicit AndroidBannerAd(QObject *parent = nullptr);
 
-signals:
+    public:
+        void setUnitId(const QString& unitId);
 
-};
+    };
+}
 
 #endif // ANDROIDBANNERAD_H
