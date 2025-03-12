@@ -44,8 +44,7 @@ public class BannerAdActivity extends QtActivity {
     private boolean m_isAdUnitIdConfigured = false;
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "created");
 
@@ -63,15 +62,14 @@ public class BannerAdActivity extends QtActivity {
         {
             initializeBannerAdView();
             setBannerAdUnitId(DEMO_AD_UNIT_ID);
-            setBannerAdSize(320, 50);
+            //setBannerAdSize(320, 50);
             //showBannerAd();
             //...
         }
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         if (m_bannerAdView != null) {
             m_bannerAdView.destroy();
         }
