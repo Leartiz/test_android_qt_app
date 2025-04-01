@@ -14,6 +14,9 @@ Window {
         id: _androidBannerAd
 
         Component.onCompleted: {
+            _androidBannerAd.adUnitId = "demo-banner-yandex";
+            _androidBannerAd.position = Qt.point(20, 1500)
+            _androidBannerAd.size = Qt.size(320, 50)
 
             console.log("AndroidBannerAd completed!");
         }
@@ -24,11 +27,33 @@ Window {
         anchors.fill: parent
         color: "red"
 
-        Button {
+        Column {
             anchors.centerIn: parent
-            text: "Exit"
-            onClicked: {
-                AndroidToast.showToast("Это сообщение Toast через JNI!")
+            width: 250
+            spacing: 25
+
+            Button {
+                width: parent.width
+                text: "Show Toast"
+                onClicked: {
+                    AndroidToast.showToast("Это сообщение Toast через JNI!")
+                }
+            }
+
+            Button {
+                width: parent.width
+                text: "Show Banner"
+                onClicked: {
+                    _androidBannerAd.show();
+                }
+            }
+
+            Button {
+                width: parent.width
+                text: "Hide Banner"
+                onClicked: {
+                    _androidBannerAd.hide();
+                }
             }
         }
     }

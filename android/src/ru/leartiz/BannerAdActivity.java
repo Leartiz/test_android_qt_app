@@ -61,6 +61,8 @@ public class BannerAdActivity extends QtActivity {
         // test demo:
         {
             initializeBannerAdView();
+
+            // required steps!
             setBannerAdUnitId(DEMO_AD_UNIT_ID);
             //setBannerAdSize(320, 50);
             //showBannerAd();
@@ -173,6 +175,11 @@ public class BannerAdActivity extends QtActivity {
 
         // ***
 
+        Log.d(TAG, "setBannerAdSize called. Width: "      + width);
+        Log.d(TAG, "setBannerAdSize called. Max height: " + maxHeight);
+
+        // ***
+
         runOnUiThread(new Runnable() {
             public void run() {
                 // !
@@ -201,6 +208,13 @@ public class BannerAdActivity extends QtActivity {
             Log.w(TAG, "BannerAdView is not created. Cannot set AdPosition");
             return;
         }
+
+        // ***
+
+        Log.d(TAG, "setBannerAdPosition called. X: " + x);
+        Log.d(TAG, "setBannerAdPosition called. Y: " + y);
+
+        // ***
 
         runOnUiThread(new Runnable() {
             public void run() {
@@ -337,20 +351,30 @@ public class BannerAdActivity extends QtActivity {
     // -------------------------------------------------------------------
 
     public void showBannerAd() {
+        if (m_bannerAdView == null) {
+            Log.w(TAG, "BannerAdView has already been initialized");
+            return;
+        }
+
+        Log.d(TAG, "showBannerAd called");
+
         runOnUiThread(() -> {
-            if (m_bannerAdView != null) {
-                m_bannerAdView.setVisibility(View.VISIBLE);
-                m_isAdBannerShowed = true;
-            }
+            m_bannerAdView.setVisibility(View.VISIBLE);
+            m_isAdBannerShowed = true;
         });
     }
 
     public void hideBannerAd() {
+        if (m_bannerAdView == null) {
+            Log.w(TAG, "BannerAdView has already been initialized");
+            return;
+        }
+
+        Log.d(TAG, "hideBannerAd called");
+
         runOnUiThread(() -> {
-            if (m_bannerAdView != null) {
-                m_bannerAdView.setVisibility(View.GONE);
-                m_isAdBannerShowed = false;
-            }
+            m_bannerAdView.setVisibility(View.GONE);
+            m_isAdBannerShowed = false;
         });
     }
 }

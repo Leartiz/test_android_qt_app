@@ -14,40 +14,43 @@ namespace lez
         Q_OBJECT
 
     public:
-        Q_PROPERTY(int width READ width WRITE setWidth
-                   NOTIFY widthChanged FINAL)
-        Q_PROPERTY(int maxHeight READ maxHeight WRITE setMaxHeight
-                   NOTIFY maxHeightChanged FINAL)
+        Q_PROPERTY(QSize size READ getSize WRITE setSize
+                   NOTIFY sizeChanged FINAL)
+        Q_PROPERTY(QPoint position READ getPosition WRITE setPosition
+                   NOTIFY positionChanged FINAL)
 
-        // ad unit id
-        // x y
-        // visibility
+        Q_PROPERTY(QString adUnitId READ getAdUnitId WRITE setAdUnitId
+                   NOTIFY adUnitIdChanged FINAL)
 
     public:
         explicit AndroidBannerAd(QObject *parent = nullptr);
 
     public:
-        int width() const;
-        void setWidth(int value);
+        Q_INVOKABLE int getWidth() const;
+        Q_INVOKABLE int getMaxHeight() const;
 
-        int maxHeight() const;
-        void setMaxHeight(int value);
+        Q_INVOKABLE void hide();
+        Q_INVOKABLE void show();
 
     public:
-        //void setBannerAdUnitId(const QString& adUnitId);
+        QSize getSize() const;
+        QPoint getPosition() const;
+        QString getAdUnitId() const;
+        
+    public:
+        void setSize(const QSize value);
+        void setPosition(const QPoint value);
+        void setAdUnitId(const QString& value);
 
     signals:
-        void widthChanged(int value);
-        void maxHeightChanged(int value);
+        void sizeChanged(QSize value);
+        void positionChanged(QPoint value);
+        void adUnitIdChanged(QString value);
 
     private:
-        void setBannerAdSize(int width, int maxHeight);
-        void setBannerAdPosition(float x, float y);
-
-    private:
-        QString m_adUnitId;
         QSize m_size;
         QPoint m_position;
+        QString m_adUnitId;
     };
 }
 

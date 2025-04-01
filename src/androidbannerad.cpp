@@ -18,11 +18,75 @@ namespace lez
         qDebug() << "ctor 'AndroidBannerAd'";
     }
 
-    void AndroidBannerAd::setBannerAdSize(int width, int maxHeight)
+    // -------------------------------------------------------------------
+
+    int AndroidBannerAd::getWidth() const
+    {
+        return m_size.width();
+    }
+
+    int AndroidBannerAd::getMaxHeight() const
+    {
+        return m_size.height();
+    }
+
+    // -------------------------------------------------------------------
+
+    QSize AndroidBannerAd::getSize() const
+    {
+        return m_size;
+    }
+
+    QPoint AndroidBannerAd::getPosition() const
+    {
+        return m_position;
+    }
+    
+    QString AndroidBannerAd::getAdUnitId() const
+    {
+        return m_adUnitId;
+    }
+        
+    // -------------------------------------------------------------------
+
+    void AndroidBannerAd::hide()
     {
 #ifdef Q_OS_ANDROID
-        qDebug() << "AndroidBannerAd::setBannerAdSize";
+        QJniObject activity = QNativeInterface::QAndroidApplication::context();
+        if (!activity.isValid()) {
+            qWarning() << "Activity is not valid";
+            return;
+        }
 
+        activity.callMethod<void>("hideBannerAd");
+#else
+        qDebug() << "No ANDROID" << value;
+#endif
+    }
+
+    void AndroidBannerAd::show()
+    {
+#ifdef Q_OS_ANDROID
+        QJniObject activity = QNativeInterface::QAndroidApplication::context();
+        if (!activity.isValid()) {
+            qWarning() << "Activity is not valid";
+            return;
+        }
+
+        activity.callMethod<void>("showBannerAd");
+#else
+        qDebug() << "No ANDROID" << value;
+#endif
+    }
+
+    // -------------------------------------------------------------------
+
+    void AndroidBannerAd::setSize(const QSize value)
+    {
+        qDebug() << "AndroidBannerAd::setSize";
+        qDebug() << value;
+
+#ifdef Q_OS_ANDROID
         QJniObject activity = QNativeInterface::QAndroidApplication::context();
         if (!activity.isValid()) {
             qWarning() << "Activity is not valid";
@@ -30,20 +94,22 @@ namespace lez
         }
 
         QJniEnvironment env;
-        jclass integerJavaClazz = env.findClass("java/lang/Integer");
+        const jclass integerJavaClazz = env.findClass("java/lang/Integer");
         if (!integerJavaClazz) {
             qWarning() << "Unable to find class 'java/lang/Integer'";
             return;
         }
 
         // ***
-        qDebug() << "Create 'widthObject' and 'maxHeightObject'";
 
-        //const QString integerCtorSignature = "(I)V";
-        QJniObject widthObject = QJniObject(integerJavaClazz, width);
-        QJniObject maxHeightObject = QJniObject(integerJavaClazz, maxHeight);
+        qDebug() << "Create objects 'widthObject' and 'maxHeightObject'";
 
-        qDebug() << "'widthObject' and 'maxHeightObject' OK";
+        const auto widthObject = QJniObject(integerJavaClazz, value.width());
+        const auto maxHeightObject = QJniObject(integerJavaClazz, value.height());
+
+        qDebug() << "Objects 'widthObject' and 'maxHeightObject' OK";
+
+        // ***
 
         if (!widthObject.isValid()) {
             qWarning() << "Failed to create object for width";
@@ -54,45 +120,67 @@ namespace lez
             return;
         }
 
-        qDebug() << "attempt to call 'setBannerAdSize' method";
+        // ***
+
+        qDebug() << "Attempt to java-call 'setBannerAdSize' method";
         activity.callMethod<void>("setBannerAdSize",
                                   "(Ljava/lang/Integer;Ljava/lang/Integer;)V",
+
+                                  // need to convert it to an object here?
                                   widthObject.object<jobject>(),
-                                  maxHeightObject.object<jobject>()
-                                  );
+                                  maxHeightObject.object<jobject>());
 #else
-    qDebug() << "setBannerAdSize:"
-             << width << maxHeight;
+        qDebug() << "No ANDROID" << value;
+#endif
+        m_size = value;
+    }
+
+    void AndroidBannerAd::setPosition(const QPoint value)
+    {
+#ifdef Q_OS_ANDROID
+        if (m_position == value)
+            return;
+
+        QJniObject activity = QNativeInterface::QAndroidApplication::context();
+        if (!activity.isValid()) {
+            qWarning() << "Activity is not valid";
+            return;
+        }
+
+        activity.callMethod<void>("setBannerAdPosition", "(FF)V",
+                                  static_cast<float>(value.x()),
+                                  static_cast<float>(value.y()));
+        m_position = value;
+#else
+        m_position = value;
+        qDebug() << "setSize:" << value;
 #endif
     }
 
-    void AndroidBannerAd::setBannerAdPosition(float x, float y)
+    void AndroidBannerAd::setAdUnitId(const QString& value)
     {
+#ifdef Q_OS_ANDROID
+        QJniObject adUnitIdObject = QJniObject::fromString(value);
+        if (!adUnitIdObject.isValid()) {
+            qWarning() << "Failed to create adUnitId object";
+            return;
+        }
 
-    }
+        QJniObject activity = QNativeInterface::QAndroidApplication::context();
+        if (!activity.isValid()) {
+            qWarning() << "Activity is not valid";
+            return;
+        }
 
-    // -------------------------------------------------------------------
+        activity.callMethod<void>("setBannerAdUnitId",
+                                  "(Ljava/lang/String;)V",
+                                  adUnitIdObject.object<jstring>());
+        m_adUnitId = value;
+#else
 
-    int AndroidBannerAd::width() const
-    {
-        return m_size.width();
-    }
-
-    void AndroidBannerAd::setWidth(int value)
-    {
-        m_size.setWidth(value);
-        setBannerAdSize(width(), maxHeight());
-    }
-
-    int AndroidBannerAd::maxHeight() const
-    {
-        return m_size.height();
-    }
-
-    void AndroidBannerAd::setMaxHeight(int value)
-    {
-        m_size.setHeight(value);
-        setBannerAdSize(width(), maxHeight());
+        m_adUnitId = value;
+        qDebug() << "setAdUnitId:" << value;
+#endif
     }
 }
 
