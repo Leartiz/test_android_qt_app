@@ -33,6 +33,11 @@ public class ScreenUtils {
         return pixels / density;
     }
 
+    public static int convertDpToPixels(Context context, float dp) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
+    }
+
     // in pixels
     // -------------------------------------------------------------------
 

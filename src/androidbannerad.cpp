@@ -46,11 +46,29 @@ namespace lez
     {
         return m_adUnitId;
     }
+
+    bool AndroidBannerAd::getIsVisible() const
+    {
+        return m_isVisible;
+    }
         
     // -------------------------------------------------------------------
 
+    void AndroidBannerAd::setIsVisible(bool value)
+    {
+        if (value) {
+            show();
+        }
+        else {
+            hide();
+        }
+    }
+
     void AndroidBannerAd::hide()
     {
+        if (!m_isVisible)
+            return;
+
 #ifdef Q_OS_ANDROID
         QJniObject activity = QNativeInterface::QAndroidApplication::context();
         if (!activity.isValid()) {
@@ -62,10 +80,14 @@ namespace lez
 #else
         qDebug() << "No ANDROID" << value;
 #endif
+        m_isVisible = false;
     }
 
     void AndroidBannerAd::show()
     {
+        if (m_isVisible)
+            return;
+
 #ifdef Q_OS_ANDROID
         QJniObject activity = QNativeInterface::QAndroidApplication::context();
         if (!activity.isValid()) {
@@ -77,6 +99,7 @@ namespace lez
 #else
         qDebug() << "No ANDROID" << value;
 #endif
+        m_isVisible = true;
     }
 
     // -------------------------------------------------------------------
@@ -150,11 +173,10 @@ namespace lez
         activity.callMethod<void>("setBannerAdPosition", "(FF)V",
                                   static_cast<float>(value.x()),
                                   static_cast<float>(value.y()));
-        m_position = value;
 #else
-        m_position = value;
-        qDebug() << "setSize:" << value;
+        qDebug() << "No ANDROID" << value;
 #endif
+        m_position = value;
     }
 
     void AndroidBannerAd::setAdUnitId(const QString& value)
@@ -177,10 +199,42 @@ namespace lez
                                   adUnitIdObject.object<jstring>());
         m_adUnitId = value;
 #else
+        qDebug() << "No ANDROID" << value;
+#endif
+    }
 
-        m_adUnitId = value;
-        qDebug() << "setAdUnitId:" << value;
+    // -------------------------------------------------------------------
+
+    void AndroidBannerAd::placeAtBottomCenter()
+    {
+#ifdef Q_OS_ANDROID
+        QJniObject activity = QNativeInterface::QAndroidApplication::context();
+        if (!activity.isValid()) {
+            qWarning() << "Activity is not valid";
+            return;
+        }
+
+        activity.callMethod<void>("placeBannerAdViewAtBottomCenter");
+#else
+        qDebug() << "No ANDROID";
+#endif
+    }
+
+    void AndroidBannerAd::placeAtTopCenter()
+    {
+#ifdef Q_OS_ANDROID
+        QJniObject activity = QNativeInterface::QAndroidApplication::context();
+        if (!activity.isValid()) {
+            qWarning() << "Activity is not valid";
+            return;
+        }
+
+        activity.callMethod<void>("placeBannerAdViewAtTopCenter");
+#else
+        qDebug() << "No ANDROID";
 #endif
     }
 }
+
+
 

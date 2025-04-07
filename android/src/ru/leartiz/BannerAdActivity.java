@@ -110,6 +110,13 @@ public class BannerAdActivity extends QtActivity {
 
             Log.d(bannerAdViewTag, "Parent: " + m_bannerAdView.getParent());
         }
+        {
+            Log.d(bannerAdViewTag, "Width in dp: " + ScreenUtils.convertPixelsToDp(
+                this, m_bannerAdView.getWidth()));
+
+            Log.d(bannerAdViewTag, "Height in dp: " + ScreenUtils.convertPixelsToDp(
+                this, m_bannerAdView.getHeight()));
+        }
     }
 
     // private
@@ -220,6 +227,72 @@ public class BannerAdActivity extends QtActivity {
             public void run() {
                 m_bannerAdView.setX(x);
                 m_bannerAdView.setY(y);
+            }
+        });
+    }
+
+    // only after setting the size!
+    // -------------------------------------------------------------------
+
+    // estimated banner size.
+    // int width, int height
+    public void placeBannerAdViewAtBottomCenter() {
+        if (m_bannerAdView == null) {
+            Log.w(TAG, "BannerAdView is not created. Cannot place at bottom center");
+            return;
+        }
+
+        runOnUiThread(new Runnable() {
+            public void run() {
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                int screenWidth = displayMetrics.widthPixels;
+                int screenHeight = displayMetrics.heightPixels;
+
+                // Get banner dimensions
+                int bannerWidth = 840;
+                int bannerHeight = 131;
+
+                // Calculate center position
+                int paddingFromBottom = ScreenUtils.convertDpToPixels(mainInstance, (float)24);
+                int y = screenHeight - bannerHeight - paddingFromBottom;
+                int x = (screenWidth - bannerWidth) / 2;
+
+                // Set position
+                m_bannerAdView.setX(x);
+                m_bannerAdView.setY(y);
+
+                Log.d(TAG, String.format("Placed banner at bottom center. Screen: %dx%d, Banner: %dx%d, Position: %d,%d",
+                    screenWidth, screenHeight, bannerWidth, bannerHeight, x, y));
+            }
+        });
+    }
+
+    public void placeBannerAdViewAtTopCenter() {
+        if (m_bannerAdView == null) {
+            Log.w(TAG, "BannerAdView is not created. Cannot place at top center");
+            return;
+        }
+
+        runOnUiThread(new Runnable() {
+            public void run() {
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                int screenWidth = displayMetrics.widthPixels;
+                int screenHeight = displayMetrics.heightPixels;
+
+                int bannerWidth = m_bannerAdView.getWidth();
+                int bannerHeight = m_bannerAdView.getHeight();
+
+                int x = (screenWidth - bannerWidth) / 2;
+                int y = 16; // 16dp padding from top
+
+                // Set position
+                m_bannerAdView.setX(x);
+                m_bannerAdView.setY(y);
+
+                Log.d(TAG, String.format("Placed banner at top center. Screen: %dx%d, Banner: %dx%d, Position: %d,%d",
+                    screenWidth, screenHeight, bannerWidth, bannerHeight, x, y));
             }
         });
     }
@@ -348,6 +421,7 @@ public class BannerAdActivity extends QtActivity {
         );
     }
 
+    // visibility
     // -------------------------------------------------------------------
 
     public void showBannerAd() {

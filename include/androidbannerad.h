@@ -18,7 +18,10 @@ namespace lez
                    NOTIFY sizeChanged FINAL)
         Q_PROPERTY(QPoint position READ getPosition WRITE setPosition
                    NOTIFY positionChanged FINAL)
+        Q_PROPERTY(bool isVisible READ getIsVisible WRITE setIsVisible
+                   NOTIFY isVisibleChanged FINAL)
 
+    public:
         Q_PROPERTY(QString adUnitId READ getAdUnitId WRITE setAdUnitId
                    NOTIFY adUnitIdChanged FINAL)
 
@@ -36,21 +39,29 @@ namespace lez
         QSize getSize() const;
         QPoint getPosition() const;
         QString getAdUnitId() const;
+        bool getIsVisible() const;
         
     public:
         void setSize(const QSize value);
         void setPosition(const QPoint value);
         void setAdUnitId(const QString& value);
+        void setIsVisible(bool value);
+
+    public:
+        Q_INVOKABLE void placeAtBottomCenter();
+        Q_INVOKABLE void placeAtTopCenter();
 
     signals:
         void sizeChanged(QSize value);
         void positionChanged(QPoint value);
         void adUnitIdChanged(QString value);
+        void isVisibleChanged(bool value);
 
     private:
         QSize m_size;
         QPoint m_position;
         QString m_adUnitId;
+        bool m_isVisible{ true };
     };
 }
 

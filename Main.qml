@@ -15,10 +15,12 @@ Window {
 
         Component.onCompleted: {
             _androidBannerAd.adUnitId = "demo-banner-yandex";
-            _androidBannerAd.position = Qt.point(20, 1500)
-            _androidBannerAd.size = Qt.size(320, 50)
+            _androidBannerAd.size = Qt.size(320, 50) // dp
+            _androidBannerAd.placeAtBottomCenter();  // quick alignment
 
             console.log("AndroidBannerAd completed!");
+            console.log("AndroidBannerAd is visible: " +
+                        _androidBannerAd.isVisible);
         }
     }
 
@@ -44,7 +46,8 @@ Window {
                 width: parent.width
                 text: "Show Banner"
                 onClicked: {
-                    _androidBannerAd.show();
+                    //_androidBannerAd.show();
+                    _androidBannerAd.isVisible = true;
                 }
             }
 
@@ -52,7 +55,8 @@ Window {
                 width: parent.width
                 text: "Hide Banner"
                 onClicked: {
-                    _androidBannerAd.hide();
+                    //_androidBannerAd.hide();
+                    _androidBannerAd.isVisible = false;
                 }
             }
         }
